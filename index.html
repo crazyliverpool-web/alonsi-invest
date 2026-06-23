@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Leading Indicator — สรุปคอร์ส</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3250;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --accent4: #ffd93d;
+    --text: #e8eaf6;
+    --text-muted: #8b92b8;
+    --gradient: linear-gradient(135deg, #6c63ff 0%, #00d4aa 100%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,17,23,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  }
+  nav .logo { font-weight: 700; font-size: 15px; color: var(--accent); letter-spacing: 0.5px; white-space: nowrap; }
+  nav a {
+    color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500;
+    transition: color 0.2s; white-space: nowrap;
+  }
+  nav a:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    padding: 100px 40px 80px;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(108,99,255,0.15) 0%, transparent 70%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero .tag {
+    display: inline-block;
+    background: rgba(108,99,255,0.15); border: 1px solid rgba(108,99,255,0.4);
+    color: #a78bfa; border-radius: 20px; padding: 4px 16px; font-size: 12px;
+    font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.2;
+    background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 20px;
+  }
+  .hero p { color: var(--text-muted); font-size: 18px; max-width: 600px; margin: 0 auto 40px; }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat .num { font-size: 2rem; font-weight: 700; color: var(--accent2); }
+  .stat .label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* MAIN LAYOUT */
+  main { max-width: 1100px; margin: 0 auto; padding: 60px 32px; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 28px; margin-top: 64px;
+  }
+  .section-header:first-of-type { margin-top: 0; }
+  .section-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .section-header h2 { font-size: 22px; font-weight: 700; }
+  .section-header p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: rgba(108,99,255,0.4); transform: translateY(-2px); }
+  .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+
+  /* PRINCIPLE CARD */
+  .principle {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .principle-num {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: var(--gradient); display: flex; align-items: center;
+    justify-content: center; font-weight: 700; font-size: 14px; color: #fff;
+  }
+  .principle h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .principle p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* MODE TABLE */
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  .mode-icon { font-size: 28px; margin-bottom: 10px; }
+  .mode-card h4 { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .mode-card p { font-size: 13px; color: var(--text-muted); }
+
+  /* QUOTE */
+  .quote {
+    border-left: 3px solid var(--accent);
+    background: rgba(108,99,255,0.07);
+    border-radius: 0 12px 12px 0;
+    padding: 18px 24px;
+    margin: 20px 0;
+    font-style: italic;
+    font-size: 16px;
+    color: #c4b5fd;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 10px; border-radius: 20px; letter-spacing: 0.5px;
+  }
+  .badge-purple { background: rgba(108,99,255,0.2); color: #a78bfa; }
+  .badge-teal { background: rgba(0,212,170,0.15); color: #34d399; }
+  .badge-red { background: rgba(255,107,107,0.15); color: #f87171; }
+  .badge-yellow { background: rgba(255,217,61,0.15); color: #fbbf24; }
+
+  /* TIMELINE */
+  .timeline { display: flex; align-items: center; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+  .timeline-step {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 18px; text-align: center;
+    flex: 1; min-width: 120px;
+  }
+  .timeline-step .t-icon { font-size: 20px; margin-bottom: 4px; }
+  .timeline-step .t-label { font-size: 12px; font-weight: 600; }
+  .timeline-step .t-sub { font-size: 11px; color: var(--text-muted); }
+  .timeline-arrow { color: var(--accent); font-size: 20px; padding: 0 6px; flex-shrink: 0; }
+
+  /* SECTOR TABLE */
+  .sector-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .sector-table th {
+    background: var(--surface2); color: var(--text-muted);
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .sector-table td {
+    padding: 14px 16px; border-bottom: 1px solid rgba(46,50,80,0.5);
+    vertical-align: top;
+  }
+  .sector-table tr:last-child td { border-bottom: none; }
+  .sector-table tr:hover td { background: rgba(108,99,255,0.04); }
+  .sector-icon { font-size: 18px; margin-right: 8px; }
+  .sector-name { font-weight: 600; }
+  .li-list { color: var(--text-muted); font-size: 13px; }
+
+  /* WARNING */
+  .warning {
+    background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.3);
+    border-radius: 12px; padding: 16px 20px; display: flex; gap: 12px; align-items: flex-start;
+    margin: 20px 0;
+  }
+  .warning-icon { font-size: 18px; flex-shrink: 0; }
+  .warning p { font-size: 14px; color: #fca5a5; }
+
+  /* KEY TAKEAWAY */
+  .takeaway-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .takeaway {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 22px;
+    border-top: 3px solid;
+  }
+  .takeaway.purple { border-top-color: var(--accent); }
+  .takeaway.teal { border-top-color: var(--accent2); }
+  .takeaway.red { border-top-color: var(--accent3); }
+  .takeaway.yellow { border-top-color: var(--accent4); }
+  .takeaway h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .takeaway p { font-size: 13px; color: var(--text-muted); }
+
+  /* ITERATION */
+  .version-flow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 16px; }
+  .version-box {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; font-size: 13px;
+  }
+  .version-box .vnum { font-weight: 700; color: var(--accent); font-size: 12px; }
+
+  /* ROLE CARD */
+  .role-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .role-card .role-icon { font-size: 24px; margin-bottom: 8px; }
+  .role-card h4 { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .role-card p { font-size: 13px; color: var(--text-muted); }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 48px 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted); font-size: 13px;
+    margin-top: 80px;
+  }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  ul { padding-left: 20px; }
+  li { margin-bottom: 6px; font-size: 14px; color: var(--text-muted); }
+  li strong { color: var(--text); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 60px 20px 48px; }
+    main { padding: 40px 20px; }
+    nav { padding: 12px 16px; gap: 12px; }
+    .hero-stats { gap: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">📈 AI Leading Indicator</span>
+  <a href="#philosophy">ปรัชญา</a>
+  <a href="#ai">AI Framework</a>
+  <a href="#li">Leading Indicator</a>
+  <a href="#sectors">รายเซกเตอร์</a>
+  <a href="#workshops">Workshop</a>
+  <a href="#takeaways">Key Takeaways</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="tag">Course Summary · 4 Sessions</div>
+  <h1>AI Leading Indicator</h1>
+  <p>ใช้ AI หาสัญญาณล่วงหน้าก่อนงบการเงินออก — นำหน้าตลาด 1–2 ไตรมาส</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="num">4</div><div class="label">วันเรียน</div></div>
+    <div class="stat"><div class="num">2</div><div class="label">ประเภท LI</div></div>
+    <div class="stat"><div class="num">7+</div><div class="label">กลุ่มอุตสาหกรรม</div></div>
+    <div class="stat"><div class="num">3</div><div class="label">Workshop จริง</div></div>
+  </div>
+</section>
+
+<main>
+
+  <!-- SECTION 1: PHILOSOPHY -->
+  <div id="philosophy" class="section-header reveal">
+    <div class="section-icon" style="background:rgba(108,99,255,0.15)">💼</div>
+    <div>
+      <h2>ปรัชญาการลงทุนของอาจารย์</h2>
+      <p>Session 1 — สไตล์และหลักคิดก่อนเข้าสู่เนื้อหา</p>
+    </div>
+  </div>
+
+  <div class="grid-2 reveal">
+    <div class="card">
+      <h3>📊 Portfolio Style</h3>
+      <ul>
+        <li>ถือหุ้น <strong>3–10 ตัว</strong> ตัวเดียวไม่เกิน <strong>30%</strong></li>
+        <li>Time frame <strong>1–3 ปี</strong> (70%) + <strong>Forever</strong> (30%)</li>
+        <li>หุ้นนอก <strong>50–70%</strong>, หุ้นไทย <strong>30–50%</strong></li>
+        <li>Fundamental <strong>80%</strong>, Technical <strong>20%</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🎯 โฟกัส Pivotal Moment</h3>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:12px">จุดเปลี่ยนที่ Outlook เปลี่ยนจาก <span class="badge badge-red">แย่</span> → <span class="badge badge-teal">กลางๆ</span> ปลอดภัยกว่า และมีแต้มต่อมากกว่าซื้อหุ้นที่ดีอยู่แล้ว</p>
+      <p style="font-size:13px;color:var(--text-muted)">ต้องมี Playbook เฉพาะตัวในช่วงนี้ ไม่ใช่แค่ดูว่าหุ้นถูกหรือแพง</p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px" class="reveal">
+    <div class="principle"><div class="principle-num">1</div><div><h4>Maximize risk-adjusted return 3–5 ปี</h4><p>พัฒนาระบบที่ผลตอบแทนสูงสุดเมื่อเทียบกับความเสี่ยง ไม่ใช่แค่ผลตอบแทนสูงสุด</p></div></div>
+    <div class="principle"><div class="principle-num">2</div><div><h4>Quantify หลักคิด ~80%</h4><p>ทำให้กระบวนการตัดสินใจวัดได้ ลดการใช้ความรู้สึก</p></div></div>
+    <div class="principle"><div class="principle-num">3</div><div><h4>Minimize effort (Pareto 20/80)</h4><p>โฟกัส 20% ของปัจจัยที่ให้ผล 80% ไม่ต้องไล่ทุกอย่าง</p></div></div>
+    <div class="principle"><div class="principle-num">4</div><div><h4>ทำน้อย คิดเยอะ (Punchcard)</h4><p>ตัดสินใจน้อยครั้งแต่มีคุณภาพ ไม่ trading บ่อย</p></div></div>
+    <div class="principle"><div class="principle-num">5</div><div><h4>Minimize ความผันผวนอารมณ์</h4><p>ระบบที่ดีช่วยให้ไม่ตัดสินใจด้วยอารมณ์ในช่วงตลาดผันผวน</p></div></div>
+    <div class="principle"><div class="principle-num">6</div><div><h4>Playbook เฉพาะตัวในช่วง Pivotal</h4><p>แต่ละหุ้นต้องมี checklist ของสัญญาณที่จะ trigger การลงทุน</p></div></div>
+  </div>
+
+  <!-- SECTION 2: AI FRAMEWORK -->
+  <div id="ai" class="section-header reveal">
+    <div class="section-icon" style="background:rgba(0,212,170,0.12)">🤖</div>
+    <div>
+      <h2>หลักคิดเรื่อง AI</h2>
+      <p>Session 1 — วิธีใช้ AI ให้ได้เปรียบในการลงทุน</p>
+    </div>
+  </div>
+
+  <div class="quote reveal">
+    "Prompt ที่ดีที่สุดคือการไม่ต้อง Prompt เลย" — ถ้า AI เข้าใจบริบทและวัตถุประสงค์ดีพอ ไม่ต้องอธิบายซ้ำทุกครั้ง
+  </div>
+
+  <div class="warning reveal">
+    <span class="warning-icon">⚠️</span>
+    <p><strong>สิ่งที่อาจารย์เตือน:</strong> AI ทำได้ทุกอย่าง แต่ความแม่นยำแปรปรวน ถ้าให้ทำเยอะ ผิดเยอะด้วย — Value ของ AI ไม่ได้มาจาก output แต่มาจาก <strong>Process</strong> ที่ดี</p>
+  </div>
+
+  <div style="margin-bottom:20px" class="reveal">
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:16px">4 บทบาทที่นักลงทุนยุค AI ต้องมี</h3>
+    <div class="grid-2">
+      <div class="role-card"><div class="role-icon">🔍</div><h4>Validator</h4><p>เช็คว่า AI ให้ข้อมูลถูกหรือผิด รู้ว่าเชื่อได้แค่ไหน</p></div>
+      <div class="role-card"><div class="role-icon">🎬</div><h4>Director</h4><p>บอกให้ AI ถามกว้างหรือเจาะจงตามสถานการณ์</p></div>
+      <div class="role-card"><div class="role-icon">🎼</div><h4>Orchestrator</h4><p>กำหนด Process ว่า AI ทำ Step อะไรบ้าง ลำดับไหน</p></div>
+      <div class="role-card"><div class="role-icon">🔗</div><h4>Connector</h4><p>เชื่อม AI กับ Ecosystem ข้อมูลที่มีอยู่</p></div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:16px">Minimal Viable AI Process (MVAP) — เลือก Mode ให้ถูก</h3>
+    <div class="grid-3">
+      <div class="mode-card">
+        <div class="mode-icon">💬</div>
+        <h4>Chat</h4>
+        <p>คิดไปพร้อมกัน ยังไม่มีเป้าหมายชัด ต้องการ explore</p>
+      </div>
+      <div class="mode-card">
+        <div class="mode-icon">🤝</div>
+        <h4>Cowork</h4>
+        <p>มี objective ชัด ต้องการ live artifact ที่ update ได้</p>
+      </div>
+      <div class="mode-card">
+        <div class="mode-icon">⚙️</div>
+        <h4>Code (Python)</h4>
+        <p>งาน repetitive ที่ต้องทำทุกวัน หรือ Cowork แก้ไม่ได้</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card reveal" style="margin-top:20px">
+    <h3>📄 claude.md — ระบบ Instruction ส่วนตัว</h3>
+    <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px">เขียนกฎให้ AI ทำตามโดยไม่ต้อง prompt ซ้ำ แบ่ง 4 หมวด</p>
+    <div class="grid-2">
+      <div><span class="badge badge-purple">G — Ground Rules</span><p style="font-size:13px;color:var(--text-muted);margin-top:8px">Search ก่อนตอบ, ถ้าไม่รู้ให้บอก อย่าเดา, ห้ามใช้คำว่า "moat"</p></div>
+      <div><span class="badge badge-teal">O — Orchestration</span><p style="font-size:13px;color:var(--text-muted);margin-top:8px">หลังทำเสร็จบอก tool ที่ใช้ + token count เพื่อประเมิน</p></div>
+      <div><span class="badge badge-yellow">V — Validation</span><p style="font-size:13px;color:var(--text-muted);margin-top:8px">ทุก claim ต้องมี source, prefer primary ไม่ใช่ aggregator</p></div>
+      <div><span class="badge badge-red">D — Development</span><p style="font-size:13px;color:var(--text-muted);margin-top:8px">งาน 3 ขั้นขึ้นไปต้องวางแผนก่อน, chart ใช้ Monthly/Quarterly</p></div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: LEADING INDICATOR -->
+  <div id="li" class="section-header reveal">
+    <div class="section-icon" style="background:rgba(255,217,61,0.12)">📡</div>
+    <div>
+      <h2>Leading Indicator คืออะไร</h2>
+      <p>Session 1–2 — หัวใจของคอร์ส</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>🎯 นิยาม</h3>
+    <p style="font-size:15px;margin-bottom:16px"><strong>Leading Indicator = ข้อมูลที่บอกสัญญาณก่อนงบการเงินจะออก</strong> นำหน้า 1–2 ไตรมาส</p>
+    <p style="font-size:14px;color:var(--text-muted)">เปรียบเหมือนเจ้าของร้านอาหาร รู้ว่าวันนี้ลูกค้าเข้ามากหรือน้อย <em>(Leading)</em> ก่อนจะรู้ยอดรายได้สิ้นเดือน <em>(Financial Statement)</em></p>
+  </div>
+
+  <div style="margin:24px 0" class="reveal">
+    <h3 style="font-size:15px;font-weight:600;margin-bottom:16px">ลำดับความเร็วของข้อมูล</h3>
+    <div class="timeline">
+      <div class="timeline-step"><div class="t-icon">⚡</div><div class="t-label">Daily</div><div class="t-sub">Google Trends</div></div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-step"><div class="t-icon">📅</div><div class="t-label">Monthly</div><div class="t-sub">Deliveries, Revenue</div></div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-step"><div class="t-icon">📆</div><div class="t-label">Quarterly</div><div class="t-sub">Guidance, Outlook</div></div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-step"><div class="t-icon">📊</div><div class="t-label">Financial</div><div class="t-sub">งบการเงิน (ช้าสุด)</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2 reveal">
+    <div class="card" style="border-color:rgba(108,99,255,0.3)">
+      <h3>📖 Story Leading Indicator</h3>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:12px">ปัจจัยเชิงคุณภาพ <strong>ตีความเอง</strong> ไม่สามารถวัดเป็นตัวเลขโดยตรง</p>
+      <ul>
+        <li>GA (General Availability) launch</li>
+        <li>Product roadmap อัปเดต</li>
+        <li>Usage เริ่มเพิ่ม (ไม่ใช่ตัวเลขแน่ชัด)</li>
+        <li>Management tone เปลี่ยน</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(0,212,170,0.3)">
+      <h3>🔢 Number Leading Indicator</h3>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:12px">ตัวเลข <strong>พล็อตกราฟได้</strong> ติดตามเป็นระบบได้ ชัดเจนกว่า</p>
+      <ul>
+        <li>Google Trends Search Volume</li>
+        <li>Monthly Deliveries / Revenue</li>
+        <li>Website Traffic (Organic vs Paid)</li>
+        <li>Engagement Metrics (Streak, DAU)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>🔄 Framework การวิเคราะห์ (3 ขั้น)</h3>
+    <div class="timeline" style="margin-top:16px">
+      <div class="timeline-step" style="background:rgba(108,99,255,0.1);border-color:rgba(108,99,255,0.3)">
+        <div class="t-icon">👁️</div><div class="t-label" style="color:#a78bfa">Traffic / Engagement</div><div class="t-sub">ดูเป็นอันดับแรก</div>
+      </div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-step" style="background:rgba(0,212,170,0.07);border-color:rgba(0,212,170,0.3)">
+        <div class="t-icon">🔭</div><div class="t-label" style="color:#34d399">Outlook / Guidance</div><div class="t-sub">ยืนยัน direction</div>
+      </div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-step" style="background:rgba(255,217,61,0.07);border-color:rgba(255,217,61,0.3)">
+        <div class="t-icon">💰</div><div class="t-label" style="color:#fbbf24">Sales / Profit</div><div class="t-sub">งบการเงิน (ยืนยันสุดท้าย)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warning reveal">
+    <span class="warning-icon">⚠️</span>
+    <p><strong>กับดักที่ต้องระวัง:</strong> ตัวเลข Sales ขึ้นอาจเพราะ <u>ราคา</u> ขึ้น ไม่ใช่ <u>ปริมาณ</u> ขึ้น — ต้อง double-check Volume vs Price เสมอ เพราะถ้าขึ้นเพราะราคา = เงินเฟ้อ ไม่ใช่ demand จริง</p>
+  </div>
+
+  <!-- SECTION 4: SECTORS -->
+  <div id="sectors" class="section-header reveal">
+    <div class="section-icon" style="background:rgba(255,107,107,0.12)">🏭</div>
+    <div>
+      <h2>Leading Indicator รายเซกเตอร์</h2>
+      <p>Session 2–3 — ตัวอย่างจริงที่อาจารย์ใช้</p>
+    </div>
+  </div>
+
+  <div class="card reveal" style="padding:0;overflow:hidden">
+    <table class="sector-table">
+      <thead>
+        <tr>
+          <th>กลุ่มอุตสาหกรรม</th>
+          <th>Leading Indicator หลัก</th>
+          <th>แหล่งข้อมูล</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="sector-icon">🛒</span><span class="sector-name">Consumer / Retail</span></td>
+          <td><div class="li-list">Search volume, CPG volume, Consumer confidence, Website traffic</div></td>
+          <td><div class="li-list">Google Trends, Circana, UMich Sentiment, SimilarWeb</div></td>
+        </tr>
+        <tr>
+          <td><span class="sector-icon">🍔</span><span class="sector-name">Restaurant</span></td>
+          <td><div class="li-list">POS data (Sales/Traffic/Price), Foot traffic, Card spending</div></td>
+          <td><div class="li-list">RMS QSR, Placer.ai, BofA Checkpoint, NRA RPI</div></td>
+        </tr>
+        <tr>
+          <td><span class="sector-icon">💾</span><span class="sector-name">Semiconductor / AI</span></td>
+          <td><div class="li-list">Monthly revenue, Hyperscaler CapEx, Phone shipments, Lens revenue</div></td>
+          <td><div class="li-list">TSMC, CAICT, Hyperscalers (MSFT/AMZN/GOOG/META), Largan</div></td>
+        </tr>
+        <tr>
+          <td><span class="sector-icon">⚡</span><span class="sector-name">EV / Automotive</span></td>
+          <td><div class="li-list">Monthly vehicle deliveries, Battery commodity prices</div></td>
+          <td><div class="li-list">XPEV, CPCA (China), Lithium/Cobalt prices</div></td>
+        </tr>
+        <tr>
+          <td><span class="sector-icon">☁️</span><span class="sector-name">Enterprise Software</span></td>
+          <td><div class="li-list">Hyperscaler CapEx ($117B→$710B), Adoption rate, DB popularity</div></td>
+          <td><div class="li-list">Hyperscaler earnings, Ramp.com, DB-Engines Ranking</div></td>
+        </tr>
+        <tr>
+          <td><span class="sector-icon">🌐</span><span class="sector-name">Online Platform</span></td>
+          <td><div class="li-list">DAU/WAU, Streak retention (365-day), Engagement depth</div></td>
+          <td><div class="li-list">Duolingo Streak, SimilarWeb, App Annie</div></td>
+        </tr>
+        <tr>
+          <td><span class="sector-icon">🚢</span><span class="sector-name">Manufacturing / Logistics</span></td>
+          <td><div class="li-list">Inventory-to-sales ratio, Freight rates</div></td>
+          <td><div class="li-list">Baltic Dry Index, SCFI (Container freight)</div></td>
+        </tr>
+        <tr>
+          <td><span class="sector-icon">🇹🇭</span><span class="sector-name">หุ้นไทย</span></td>
+          <td><div class="li-list">Export data by HS Code (computer/electronics)</div></td>
+          <td><div class="li-list">กรมศุลกากร, BOT</div></td>
+        </tr>
+        <tr>
+          <td><span class="sector-icon">💊</span><span class="sector-name">Healthcare / Pharma</span></td>
+          <td><div class="li-list">Phase trial roadmap, FDA approval, CMS Medicare coverage</div></td>
+          <td><div class="li-list">ClinicalTrials.gov, FDA pipeline</div></td>
+        </tr>
+        <tr>
+          <td><span class="sector-icon">🚀</span><span class="sector-name">Space / Starlink</span></td>
+          <td><div class="li-list">Starship test success → V3 launch → capacity → price → margin</div></td>
+          <td><div class="li-list">SpaceX updates, FCC filings</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card reveal" style="margin-top:20px;border-color:rgba(255,217,61,0.25)">
+    <h3>💡 ตัวอย่างจริง: Amazon</h3>
+    <p style="font-size:14px;color:var(--text-muted)">อาจารย์เห็นว่า Amazon <strong>organic traffic ลดลงต่อเนื่อง 2 ปี</strong> → แปลว่ารายได้ retail ที่โตมาจากราคาขึ้น ไม่ใช่ลูกค้าใหม่ → <strong>catalyst จริงของหุ้นคือ AWS</strong> ไม่ใช่ retail — Leading Indicator ช่วยเห็นความจริงนี้ก่อนที่คนอื่นจะรู้</p>
+  </div>
+
+  <!-- SECTION 5: WORKSHOPS -->
+  <div id="workshops" class="section-header reveal">
+    <div class="section-icon" style="background:rgba(0,212,170,0.12)">🛠️</div>
+    <div>
+      <h2>Workshop จริง</h2>
+      <p>Session 2–3 — สาธิตการสร้างระบบอัตโนมัติ</p>
+    </div>
+  </div>
+
+  <div class="grid-3 reveal">
+    <div class="card">
+      <h3>📈 Google Trends Dashboard</h3>
+      <p style="font-size:13px;color:var(--text-muted)">ใช้ Cowork สร้าง Live Dashboard เทียบ brand ต่างๆ — Interest Over Time + Related Queries + Insights อัปเดตได้เอง</p>
+      <p style="font-size:12px;color:var(--accent2);margin-top:10px">ตัวอย่าง: Sweet Green vs Kawa</p>
+    </div>
+    <div class="card">
+      <h3>🎬 YouTube API Bot</h3>
+      <p style="font-size:13px;color:var(--text-muted)">ดึง transcript จาก YouTube channels → สรุป 5 bullet → ป้อน Google Sheets ทุกเช้าตี 7 อัตโนมัติ โดยไม่ต้องไปฟังเอง</p>
+      <p style="font-size:12px;color:var(--accent2);margin-top:10px">ช่อง: All-in, Diary of a CEO ฯลฯ</p>
+    </div>
+    <div class="card">
+      <h3>🕵️ Bot สรุปข่าวหุ้น</h3>
+      <p style="font-size:13px;color:var(--text-muted)">Browser Automation + Grok AI ดึงข่าวจาก X/Twitter → สรุปเข้า Sheets อัตโนมัติ — "วิธีสายมืด" ไม่ต้องเสียเงิน Twitter API ราคาแพง</p>
+      <p style="font-size:12px;color:var(--accent2);margin-top:10px">ประหยัดค่า API หลักพันต่อเดือน</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>🔄 หลักพัฒนา Dashboard แบบ Iteration</h3>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">อย่าสร้างให้สมบูรณ์ครั้งเดียว พัฒนาเป็น Version ทีละขั้น</p>
+    <div class="version-flow">
+      <div class="version-box"><div class="vnum">V1</div>หา LI ตัวแรก</div>
+      <span style="color:var(--accent)">→</span>
+      <div class="version-box"><div class="vnum">V2</div>เพิ่ม cross-check LI</div>
+      <span style="color:var(--accent)">→</span>
+      <div class="version-box"><div class="vnum">V3</div>เชื่อม Booking LI</div>
+      <span style="color:var(--accent)">→</span>
+      <div class="version-box"><div class="vnum">V4</div>เพิ่ม Trailing LI</div>
+      <span style="color:var(--accent)">→</span>
+      <div class="version-box"><div class="vnum">V5</div>Validate & fact-check</div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: KEY TAKEAWAYS -->
+  <div id="takeaways" class="section-header reveal">
+    <div class="section-icon" style="background:rgba(255,217,61,0.12)">⭐</div>
+    <div>
+      <h2>Key Takeaways</h2>
+      <p>6 หลักการที่ทำให้ระบบนี้ได้ผลในระยะยาว</p>
+    </div>
+  </div>
+
+  <div class="takeaway-grid reveal">
+    <div class="takeaway purple">
+      <h4>Process > Output</h4>
+      <p>ถ้า process ดีก่อน ผลลัพธ์ดีตามมาเองในระยะยาว ไม่ต้องไล่ output ทีละครั้ง</p>
+    </div>
+    <div class="takeaway teal">
+      <h4>LI คือเครื่องมือ ไม่ใช่สูตรสำเร็จ</h4>
+      <p>ต้องเข้าใจเหตุผลเบื้องหลังทุกครั้ง ไม่ใช่แค่ดูว่าตัวเลขขึ้นหรือลง</p>
+    </div>
+    <div class="takeaway red">
+      <h4>ราคาขึ้น ≠ ปริมาณขึ้น</h4>
+      <p>Double check Volume vs Price growth เสมอ ขึ้นเพราะราคา = เงินเฟ้อ ไม่ใช่ demand จริง</p>
+    </div>
+    <div class="takeaway yellow">
+      <h4>80% useful ดีพอแล้ว</h4>
+      <p>ไม่ต้องไล่ 100% perfect เพราะเสียเวลามาก ได้ 80% แล้วลงมือทำ</p>
+    </div>
+    <div class="takeaway purple">
+      <h4>10,000 iterations to mastery</h4>
+      <p>จำนวนครั้งที่ลองและปรับปรุงสำคัญกว่าเวลาที่ใช้ (อ้าง Naval Ravikant)</p>
+    </div>
+    <div class="takeaway teal">
+      <h4>Valuation ต้องมาคู่ LI</h4>
+      <p>LI ดีแต่ราคาแพงมากก็ไม่น่าเข้า จุดที่น่าสนใจ = Valuation ไม่แพง + LI เริ่มพลิกบวก</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>สรุปจากคอร์ส AI Leading Indicator — อาจารย์ Alongkot Manorungrueangrat</p>
+  <p style="margin-top:8px;color:rgba(139,146,184,0.5);font-size:12px">Generated from course transcripts · 4 sessions · 2026</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Smooth scroll for nav
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
