@@ -1,5 +1,15 @@
 [
   {
+    "slug": "leading-indicator-101",
+    "title": "Leading Indicator ฉบับเข้าใจง่าย",
+    "icon": "🍋",
+    "desc": "อธิบาย Leading Indicator ด้วยเรื่องร้านน้ำมะนาว — สำหรับคนที่ไม่เคยรู้จักคำนี้มาก่อน อ่านจบใน 3 นาที",
+    "tags": ["เข้าใจง่าย", "Leading Indicator", "เริ่มต้น"],
+    "meta": "ELI12 · 3 นาที",
+    "status": "done",
+    "accent": "purple"
+  },
+  {
     "slug": "ai-leading-indicator",
     "title": "AI Leading Indicator",
     "icon": "📡",
